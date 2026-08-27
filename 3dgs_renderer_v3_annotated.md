@@ -1,3 +1,4 @@
+<!-- markdownlint-disable-file MD013 -->
 # Annotated Walkthrough: `3dgs_renderer_v3.py` and `shared/tile_builder.py`
 
 Third and last. Read [v1](3dgs_renderer_v1_annotated.md) and
@@ -278,7 +279,7 @@ worth being precise about what changes and what does not.
 ### The loop bound is the whole idea
 
 | | loop over | typical length |
-|---|---|---|
+| --- | --- | --- |
 | v2 | every splat in the scene | 100,000 |
 | v3 | only this pixel's tile list | tens |
 
@@ -341,7 +342,7 @@ indexed by position. `group_ids` is all zeros: one camera view, as noted in §2.
 ## 5. The three versions side by side
 
 | | v1 | v2 | v3 |
-|---|---|---|---|
+| --- | --- | --- | --- |
 | Pixel loop | Python, serial | Warp, parallel | Warp, parallel |
 | Splats per pixel | all M | all M | only this tile's list |
 | Ordering | one global depth sort | same, reused | per-tile, via stable two-pass sort |

@@ -1,3 +1,4 @@
+<!-- markdownlint-disable-file MD013 -->
 # Annotated Walkthrough: `3dgs_renderer_v2.py`
 
 Second of three. Read [v1](3dgs_renderer_v1_annotated.md) first — this document assumes the whole
@@ -33,7 +34,7 @@ of GPU cores.
 Three new concepts, each with its own section below:
 
 | Concept | Role |
-|---|---|
+| --- | --- |
 | `@wp.kernel` | Marks a function as parallel code, not ordinary Python. Its body describes **one** work item. |
 | `wp.array`, `wp.vec2`, `wp.vec3` | Warp's array and small-vector types, living in memory a kernel can reach — on CPU or GPU. |
 | `wp.launch(...)` | Actually runs it: "start N copies of this kernel, one per pixel." |
@@ -127,7 +128,7 @@ you have a working v1, you are translating, not redesigning.
 What changes is the spelling, because kernels are not ordinary Python:
 
 | v1 (NumPy/Python) | v2 (Warp kernel) | why |
-|---|---|---|
+| --- | --- | --- |
 | `min(...)`, `np.exp(...)` | `wp.min(...)`, `wp.exp(...)` | kernels cannot call NumPy or most Python builtins |
 | `total *= x` | `total = total * x` | Warp wants explicit assignment |
 | `total += x` | `total = total + x` | same |

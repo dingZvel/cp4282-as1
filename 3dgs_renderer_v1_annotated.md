@@ -1,3 +1,4 @@
+<!-- markdownlint-disable-file MD013 -->
 # Annotated Walkthrough: `3dgs_renderer_v1.py`
 
 This is the first of three walkthroughs. Read them in order — **v1**, then
@@ -25,7 +26,7 @@ with x, y, z.
 A few operations recur throughout all three files:
 
 | Syntax | Meaning |
-|---|---|
+| --- | --- |
 | `a @ b` | **Matrix multiplication** (not elementwise). If `a` is `(m, k)` and `b` is `(k, n)`, `a @ b` is `(m, n)`, computed as $(AB)_{ij} = \sum_k A_{ik}B_{kj}$. |
 | `a.T` | **Transpose**: swaps the last two axes. `(m, n)` becomes `(n, m)`. |
 | `a * b` | **Elementwise** multiply. Requires matching shapes, or shapes that broadcast. |
@@ -676,7 +677,7 @@ pixel turning black rather than saturating white.
 ## 10. The pipeline, end to end
 
 | Stage | Input | Output | Cost |
-|---|---|---|---|
+| --- | --- | --- | --- |
 | Load | `.ply` file | `GaussianSet` (N splats) | once |
 | Build covariance | scales + rotations | `(N,3,3)` world covariance | vectorised |
 | To camera space | world covariance + camera | camera-space means and covariance | vectorised |
