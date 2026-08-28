@@ -194,7 +194,7 @@ def main() -> None:
     )
     splats = GaussianSet.from_ply(args.ply)
     image = CpuRenderer(camera).render(splats)
-    Image.fromarray(np.uint8(np.clip(image, 0.0, 1.0) * 255.0)).save(args.output)
+    Image.fromarray((np.clip(image, 0.0, 1.0) * 255.0).astype(np.uint8)).save(args.output)
 
 
 if __name__ == "__main__":
