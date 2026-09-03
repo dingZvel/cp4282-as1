@@ -31,7 +31,7 @@ for _candidate in (_here / "shared", _here.parent / "shared"):
 from camera import Camera
 from gaussian_set import GaussianSet
 from projected_gaussians import ProjectedGaussians
-from splat_math import ALPHA_CUTOFF, SUPPORT_RADIUS_SQUARED, quaternion_to_matrix
+from splat_math import ALPHA_CUTOFF, SUPPORT_RADIUS_SQUARED, TRANSMITTANCE_CUTOFF, quaternion_to_matrix
 # A faint splat reaches ALPHA_CUTOFF sooner than a strong one, so it can be truncated sooner than
 # the full 3-sigma disc. `beta` scales how quickly that happens. Note the Warp trainers use
 # `compact_box.beta = 0.5`; these renderers keep 1.0, which is what v2 and v3 have always applied.
@@ -170,8 +170,31 @@ class CpuRenderer:
                 # Composite the sorted splats front to back, then finish with the
                 # background weighted by the remaining transmittance.
 
-                # TODO: The RHS is a placeholder
-                image[py, px] = np.zeros(3, dtype=np.float32)
+                color = np.zeros(3, dtype=np.float32)
+                transmittance = 1.0
+
+                for index in range(len(projected.opacities)):
+                    support = supports[index]
+                    if support <= 0.0:
+                        continue
+
+                    du = x - projected.centres[index, 0]
+                    dv = y - projected.centres[index, 1]
+                    A, B, C = projected.conics[index]
+                    q = A * du * du + 2.0 * B * du * dv + C * dv * dv
+                    if q > support:
+                        continue
+
+                    alpha = min(0.99, projected.opacities[index] * np.exp(-0.5 * q))
+                    if alpha < ALPHA_CUTOFF:
+                        continue
+
+                    color += transmittance * alpha * projected.colors[index]
+                    transmittance *= 1.0 - alpha
+                    if transmittance < TRANSMITTANCE_CUTOFF:
+                        break
+
+                image[py, px] = color + transmittance * background_color
 
         return image
 
