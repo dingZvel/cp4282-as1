@@ -45,9 +45,31 @@ def rasterize(
     # One work item per pixel: walk the globally depth-sorted splats, accumulate
     # front to back, and composite the background with the leftover transmittance.
     # This must reproduce 3dgs_renderer_v1 exactly.
+    color = wp.vec3(0.0, 0.0, 0.0)
+    transmittance = float(1.0)
 
-    # TODO: The RHS is a placeholder
-    image[pixel] = wp.vec3(0.0, 0.0, 0.0)
+    for index in range(count):
+        support = supports[index]
+        if support <= 0.0:
+            continue
+
+        du = px - centres[index][0]
+        dv = py - centres[index][1]
+        conic = conics[index]
+        q = conic[0] * du * du + 2.0 * conic[1] * du * dv + conic[2] * dv * dv
+        if q > support:
+            continue
+
+        alpha = wp.min(0.99, opacities[index] * wp.exp(-0.5 * q))
+        if alpha < ALPHA_CUTOFF:
+            continue
+
+        color = color + transmittance * alpha * colours[index]
+        transmittance = transmittance * (1.0 - alpha)
+        if transmittance < TRANSMITTANCE_CUTOFF:
+            break
+
+    image[pixel] = color + transmittance * background
 
 
 class WarpRenderer:
@@ -103,7 +125,7 @@ def main() -> None:
     splats = GaussianSet.from_ply(args.ply)
     renderer = WarpRenderer(args.width, args.height, len(splats.means), args.device)
     image = renderer.render(splats, camera)
-    Image.fromarray(np.uint8(np.clip(image, 0.0, 1.0) * 255.0)).save(args.output)
+    Image.fromarray((np.clip(image, 0.0, 1.0) * 255.0).astype(np.uint8)).save(args.output)
 
 
 if __name__ == "__main__":
