@@ -53,3 +53,20 @@ python scripts/check_setup.py
 
 Use `--help` on each renderer for its command-line arguments. Start with a low resolution while
 debugging.
+
+## PNG outputs from `scripts/render.sbatch`
+
+The batch script produces the following PNG files:
+
+| Output PNG | Input PLY | Producing program |
+| --- | --- | --- |
+| `5splats.png` | `5splats.ply` | `3dgs_renderer_v2.py` |
+| `lego_v2.png` | `lego.ply` | `3dgs_renderer_v2.py` |
+| `lego_init_v2.png` | `data/lego/init.ply` | `3dgs_renderer_v2.py` |
+| `lego_v3.png` | `lego.ply` | `3dgs_renderer_v3.py` |
+| `lego_init_v3.png` | `data/lego/init.ply` | `3dgs_renderer_v3.py` |
+
+## Declaration
+
+I used Codex (GPT-5.6 Sol Medium) to help me understand the code and debug in `3dgs_renderer_v1.py`,
+and help me generate the template for `./scripts/render.sbatch`.
